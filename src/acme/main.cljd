@@ -1,0 +1,27 @@
+(ns acme.main
+  (:require ["package:flutter/material.dart" :as m]
+            ["package:http/http.dart" :as http]
+            ["dart:convert" :as dc]
+            [cljd.flutter :as f]))
+
+(defn main []
+  (f/run
+    (m/MaterialApp
+      .title "Welcome to Flutter"
+      .theme (m/ThemeData .primarySwatch m.Colors/pink))
+    .home
+    (m/Scaffold
+      .appBar (m/AppBar
+                .title (m/Text "Welcome to ClojureDart")))
+    .body
+    m/Center
+    (m/ElevatedButton
+      .onPressed (fn []
+                   (let [{{:strs [access-control-allow-headers]} .-headers 
+                          :as res} (-> "https://cataas.com/api/cats?limit=10&skip=0&tags=orange"
+                                        Uri/parse
+                                        (http/get
+                                          .headers {"accept" "application/json"})
+                                        await)]
+                     (println access-control-allow-headers)))
+      .child (m/Text "TEST HTTP"))))
